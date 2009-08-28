@@ -92,7 +92,7 @@
 
 -(void) removeTile: (RMTile) tile
 {
-	NSLog(@"removeTile: tile");
+	//NSLog(@"removeTile: tile");
 
 	if (RMTileIsDummy(tile))
 	{
@@ -202,7 +202,7 @@
 #warning choosing to prune any tile that doesn't belong with this zoom
 		if (dz != 0) {
 			// tile doesn't match our zoom, delete it
-			NSLog(@"Expecting nuke: %@",[img description]);
+			//NSLog(@"Expecting nuke: %@",[img description]);
 			[self removeTile:tile forImage:img];
 		}
 #endif		

@@ -83,7 +83,7 @@ CGFloat RadiansToDegrees(CGFloat radians) {return radians * 180/ M_PI;};
 }
 -(float) maxZoom
 {
-	return 30.0f;
+	return 18.0f;
 }
 
 
