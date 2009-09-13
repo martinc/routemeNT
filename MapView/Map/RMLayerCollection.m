@@ -162,7 +162,7 @@
 	}
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center
 {
 @synchronized(sublayers) {
 	for (id layer in sublayers)
