@@ -60,7 +60,7 @@
 
 -(void) performInitialSetup
 {
-	LogMethod();
+	//LogMethod();
 
 	enableDragging = YES;
 	enableZoom = YES;
@@ -79,7 +79,7 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-	LogMethod();
+	//LogMethod();
 	if (self = [super initWithFrame:frame]) {
 		[self performInitialSetup];
 	}
@@ -121,7 +121,7 @@
 
 -(void) dealloc
 {
-	LogMethod();
+	//LogMethod();
 	self.contents = nil;
 	[super dealloc];
 }

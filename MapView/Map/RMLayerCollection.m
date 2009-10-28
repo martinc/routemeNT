@@ -88,7 +88,7 @@
 - (void)removeSublayer:(CALayer *)layer
 {
 	@synchronized(sublayers) {
-		RMLog(@"RMLayerCollection removeSublayer");
+		//RMLog(@"RMLayerCollection removeSublayer");
 		[sublayers removeObject:layer];
 		[layer removeFromSuperlayer];
 	}
@@ -97,7 +97,7 @@
 - (void)removeSublayers:(NSArray *)layers
 {
 	@synchronized(sublayers) {
-		RMLog(@"RMLayerCollection removeSublayers count of %d",[layers count]);
+		//RMLog(@"RMLayerCollection removeSublayers count of %d",[layers count]);
 		for(CALayer *aLayer in layers)
 		{
 			[sublayers removeObject:aLayer];

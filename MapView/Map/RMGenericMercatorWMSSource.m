@@ -50,7 +50,7 @@ CGFloat RadiansToDegrees(CGFloat radians) {return radians * 180/ M_PI;};
 					 tileBounds.lr.y,
 					 tileBounds.lr.x,
 					 tileBounds.ul.y];
-	//NSLog(@"Tile %d,%d,%d yields %@",tile.zoom, tile.x, tile.y, url); 
+	//RMLog(@"Tile %d,%d,%d yields %@",tile.zoom, tile.x, tile.y, url); 
 	return url; 
 } 
 

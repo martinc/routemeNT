@@ -84,9 +84,9 @@ NSString * const RMMapImageLoadedNotification = @"RMMapImageLoadedNotification";
 	BOOL contained = CGRectContainsRect(loadedBounds, [content screenBounds]);
 	
 	int targetZoom = (int)([[content mercatorToTileProjection] calculateNormalisedZoomFromScale:[content metersPerPixel]]);
-	NSAssert3(((targetZoom <= content.maxZoom) && (targetZoom >= content.minZoom)),
-			 @"target zoom %d is outside of RMMapContents limits %f to %f",
-			  targetZoom, content.minZoom, content.maxZoom);
+	//NSAssert3(((targetZoom <= content.maxZoom) && (targetZoom >= content.minZoom)),
+	//		 @"target zoom %d is outside of RMMapContents limits %f to %f",
+	//		  targetZoom, content.minZoom, content.maxZoom);
 	if (contained == NO)
 	{
 		//		RMLog(@"reassembling because its not contained");

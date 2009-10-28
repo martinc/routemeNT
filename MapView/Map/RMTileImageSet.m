@@ -73,7 +73,7 @@
 	NSAssert(!RMTileIsDummy(tile), @"attempted to remove dummy tile");
 	if (RMTileIsDummy(tile))
 	{
-		RMLog(@"attempted to remove dummy tile...??");
+		//RMLog(@"attempted to remove dummy tile...??");
 		return;
 	}
 	
@@ -185,7 +185,7 @@
 			x >> imgDz > maxx >> rectDz || x >> imgDz < minx >> rectDz ||
 			y >> imgDz > maxy >> rectDz || y >> imgDz < miny >> rectDz
 		) {
-//NSLog(@"In %s, removing tile at {%u, %u}, %hi.", __FUNCTION__, tile.x, tile.y, tile.zoom);
+//NSLog(@"In %s, %@, removing tile at {%u, %u}, %hi.", __FUNCTION__, [tileSource shortName], tile.x, tile.y, tile.zoom);
 			[self removeTile:tile forImage:img];
 		} else 
 		// we should want to prune other images if the current image matches the
@@ -305,7 +305,7 @@
 
 -(void)addTile:(RMTile)tile at:(CGRect) screenLocation
 {
-	//	RMLog(@"addTile: %d %d", tile.x, tile.y);
+	//NSLog(@"%@ addTile: %d %d, zoom %d", [tileSource shortName],  tile.x, tile.y, tile.zoom);
 	
 	RMTileImage *dummyTile = [RMTileImage dummyTile:tile];
 	RMTileImage *tileImage = [images member:dummyTile];

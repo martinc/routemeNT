@@ -75,7 +75,7 @@
 
 - (id)initWithView: (UIView*) view
 {	
-	LogMethod();
+	//LogMethod();
 	CLLocationCoordinate2D here;
 	here.latitude = kDefaultInitialLatitude;
 	here.longitude = kDefaultInitialLongitude;
@@ -92,7 +92,7 @@
 - (id)initWithView: (UIView*) view
 		tilesource:(id<RMTileSource>)newTilesource
 {	
-	LogMethod();
+	//LogMethod();
 	CLLocationCoordinate2D here;
 	here.latitude = kDefaultInitialLatitude;
 	here.longitude = kDefaultInitialLongitude;
@@ -114,7 +114,7 @@
 	  minZoomLevel:(float)minZoomLevel
    backgroundImage:(UIImage *)backgroundImage
 {
-	LogMethod();
+	//LogMethod();
 	if (![super init])
 		return nil;
 
@@ -168,7 +168,7 @@
 											   object:nil];
 
 	
-	RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", newView, tileSource, renderer);
+	//RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", newView, tileSource, renderer);
 	return self;
 }
 
@@ -184,7 +184,7 @@
 - (id) initForView: (UIView*) view WithLocation:(CLLocationCoordinate2D)latlong
 {
 	WarnDeprecated();
-	LogMethod();
+	//LogMethod();
 	id<RMTileSource> _tileSource = [[RMOpenStreetMapSource alloc] init];
 	RMMapRenderer *_renderer = [[RMCoreAnimationRenderer alloc] initWithContent:self];
 	
@@ -252,7 +252,7 @@
 												 name:UIApplicationDidReceiveMemoryWarningNotification 
 											   object:nil];
 	
-	RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", view, tileSource, renderer);
+	//RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", view, tileSource, renderer);
 	
 	return self;
 }
@@ -295,7 +295,7 @@
 
 -(void) dealloc
 {
-	LogMethod();
+	//LogMethod();
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[imagesOnScreen cancelLoading];
 	[self setRenderer:nil];
@@ -341,6 +341,71 @@
 
 - (void)moveBy: (CGSize) delta
 {
+	
+	RMProjectedRect projectedBounds = self.projectedBounds;
+	
+	//NSLog( @"Projected Bounds easting %f northing %f, width %f height %f", projectedBounds.origin.easting, projectedBounds.origin.northing, projectedBounds.size.width, projectedBounds.size.height);
+	//NSLog( @"delta is %@", NSStringFromCGSize(delta));
+	
+	RMProjectedRect newBounds = [self.mercatorToScreenProjection moveRect: projectedBounds by:delta];
+
+	RMSphericalTrapezium latLongBox = [self latitudeLongitudeBoundingBoxForScreen];
+	CGRect screenBounds = self.screenBounds;
+	RMSphericalTrapezium newLatLongBox = [self latitudeLongitudeBoundingBoxFor: CGRectMake(screenBounds.origin.x - delta.width, screenBounds.origin.y - delta.height, screenBounds.size.width, screenBounds.size.height)];
+
+	
+	//Un-wrap coordinates
+	
+	if(newLatLongBox.southwest.longitude - latLongBox.southwest.longitude > 180.0){
+		//Left edge
+		newLatLongBox.southwest.longitude -= 360.0;
+	}
+	if(latLongBox.northeast.longitude - newLatLongBox.northeast.longitude > 180.0){
+		//Right edge
+		newLatLongBox.northeast.longitude += 360.0;
+	}
+
+	
+	/*
+	NSLog( @"Lat long Bounds ne lat: %f ne lon: %f sw lat: %f sw lon: %f",
+		  latLongBox.northeast.latitude, latLongBox.northeast.longitude, latLongBox.southwest.latitude, latLongBox.southwest.longitude);
+	
+	NSLog( @"New Lat long Bounds ne lat: %f ne lon: %f sw lat: %f sw lon: %f",
+		  newLatLongBox.northeast.latitude, newLatLongBox.northeast.longitude, newLatLongBox.southwest.latitude, newLatLongBox.southwest.longitude);
+	*/
+	//Problem Case: new west is 179 , old west is -179
+	
+	//limit south: -85 deg north: 85 pos
+	
+	BOOL isTooFarLeft =  -180.0 > newLatLongBox.southwest.longitude;
+	BOOL isTooFarRight =  180.0 < newLatLongBox.northeast.longitude;
+	BOOL isTooFarSouth =  -85.0 > newLatLongBox.southwest.latitude;
+	BOOL isTooFarNorth =  85.0 < newLatLongBox.northeast.latitude;
+
+//	BOOL isTooFarLeft =  -19700000.0 > newBounds.origin.easting;
+//	BOOL isTooFarLeft =  -19000000.0 > projectedBounds.origin.easting;
+
+	BOOL isMovingLeft = delta.width > 0;
+	BOOL isMovingRight = delta.width < 0;
+	BOOL isMovingUp = delta.height > 0;
+	BOOL isMovingDown = delta.height < 0;
+
+	
+	if(isTooFarLeft && isMovingLeft || isTooFarRight && isMovingRight)
+		delta.width = 0.0;
+	
+	if(isTooFarNorth && isMovingUp || isTooFarSouth && isMovingDown)
+		delta.height = 0.0;
+
+	/*
+	BOOL isTooFarUp = -17627345.376813 < projectedBounds.origin.northing;
+	BOOL isMovingUp = delta.height > 0;
+	
+	if(isTooFarUp && isMovingUp)
+		delta.height = 0.0;
+*/
+	
+	
 	[mercatorToScreenProjection moveScreenBy:delta];
 	[imagesOnScreen moveBy:delta];
 	[tileLoader moveBy:delta];
@@ -564,7 +629,7 @@
 {
 	// Calculate rounded zoom
 	float newZoom = fmin(floorf([self zoom] + 1.0), [self maxZoom]);
-	RMLog(@"[self minZoom] %f [self zoom] %f [self maxZoom] %f newzoom %f", [self minZoom], [self zoom], [self maxZoom], newZoom);
+	//RMLog(@"[self minZoom] %f [self zoom] %f [self maxZoom] %f newzoom %f", [self minZoom], [self zoom], [self maxZoom], newZoom);
 	
 	float factor = exp2f(newZoom - [self zoom]);
 	[self zoomByFactor:factor near:pivot animated:animated];
@@ -574,7 +639,7 @@
 - (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated {
 	// Calculate rounded zoom
 	float newZoom = fmax(ceilf([self zoom] - 1.0), [self minZoom]);
-	RMLog(@"[self minZoom] %f [self zoom] %f [self maxZoom] %f newzoom %f", [self minZoom], [self zoom], [self maxZoom], newZoom);
+	//RMLog(@"[self minZoom] %f [self zoom] %f [self maxZoom] %f newzoom %f", [self minZoom], [self zoom], [self maxZoom], newZoom);
 	
 	float factor = exp2f(newZoom - [self zoom]);
 	[self zoomByFactor:factor near:pivot animated:animated];
@@ -934,7 +999,7 @@
 		}
 		myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
 		myOrigin.northing = myOrigin.northing - (zoomRect.size.height / 2);
-		RMLog(@"Origin is calculated at: %f, %f", [projection pointToLatLong:myOrigin].latitude, [projection pointToLatLong:myOrigin].longitude);
+		//RMLog(@"Origin is calculated at: %f, %f", [projection pointToLatLong:myOrigin].latitude, [projection pointToLatLong:myOrigin].longitude);
 		/*It gets all messed up if our origin is lower than the lowest place on the map, so we check.
 		 if(myOrigin.northing < -19971868.880409)
 		 {

@@ -64,7 +64,7 @@
 	// get a mutable version of the current actions dictionary
 	customActions=[[NSMutableDictionary dictionaryWithDictionary:[layer actions]] retain];
 	
-	RMLog(@"actions are %@", customActions);
+	//RMLog(@"actions are %@", customActions);
 	
 	// add the new action for sublayers
 	[customActions setObject:[NSNull null] forKey:@"sublayers"];

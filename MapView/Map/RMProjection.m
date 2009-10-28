@@ -56,7 +56,7 @@ NS_INLINE RMLatLong RMPixelPointAsLatLong(RMProjectedPoint xypoint) {
 	
 	planetBounds = projBounds;
 
-	projectionWrapsHorizontally = YES;
+	projectionWrapsHorizontally = NO;
 	
 	return self;
 }
@@ -83,6 +83,7 @@ NS_INLINE RMLatLong RMPixelPointAsLatLong(RMProjectedPoint xypoint) {
 
 - (RMProjectedPoint) wrapPointHorizontally: (RMProjectedPoint) aPoint
 {
+	
 	if (!projectionWrapsHorizontally
 		|| planetBounds.size.width == 0.0f || planetBounds.size.height == 0.0f)
 		return aPoint;
